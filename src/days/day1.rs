@@ -16,8 +16,7 @@ fn gather_input(test: bool) -> Vec<(usize, usize)> {
 	return res;
 }
 
-fn part1() -> usize {
-	let data: Vec<(usize, usize)> = gather_input(false);
+fn part1(data: &Vec<(usize, usize)>) -> usize {
 	let mut l1: Vec<usize> = data.iter().map(|x| { x.0 }).collect();
 	let mut l2: Vec<usize> = data.iter().map(|x| { x.1 }).collect();
 	l1.sort();
@@ -28,8 +27,7 @@ fn part1() -> usize {
 	return res;
 }
 
-fn part2() -> usize {
-	let data: Vec<(usize, usize)> = gather_input(false);
+fn part2(data: &Vec<(usize, usize)>) -> usize {
 	let l1: Vec<usize> = data.iter().map(|x| { x.0 }).collect();
 	let l2: Vec<usize> = data.iter().map(|x| { x.1 }).collect();
 	let res: usize = l1.iter()
@@ -44,8 +42,9 @@ fn part2() -> usize {
 
 pub fn run() {
 	use std::time::Instant;
+	let data: Vec<(usize, usize)> = gather_input(false);
 	let mut start: Instant = Instant::now();
-	println!("part 1 answer: {}\ntook {:?}", part1(), Instant::now().duration_since(start));
+	println!("part 1 answer: {}\ntook {:?}", part1(&data), Instant::now().duration_since(start));
 	start = Instant::now();
-	println!("part 2 answer: {}\ntook {:?}", part2(), Instant::now().duration_since(start));
+	println!("part 2 answer: {}\ntook {:?}", part2(&data), Instant::now().duration_since(start));
 }
