@@ -8,6 +8,7 @@ fn main() {
 
 	if args.len() != 2 {
 		println!("please provide the number of the day you want to get the answer for");
+		return;
 	}
 
 	if let Ok(res) = args[1].parse::<usize>() {

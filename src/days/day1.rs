@@ -43,6 +43,9 @@ fn part2() -> usize {
 }
 
 pub fn run() {
-	println!("part 1 answer: {}", part1());
-	println!("part 2 answer: {}", part2());
+	use std::time::Instant;
+	let mut start: Instant = Instant::now();
+	println!("part 1 answer: {}\ntook {:?}", part1(), Instant::now().duration_since(start));
+	start = Instant::now();
+	println!("part 2 answer: {}\ntook {:?}", part2(), Instant::now().duration_since(start));
 }
