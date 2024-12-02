@@ -1,10 +1,8 @@
 mod days;
-
-use std::env::args;
 use days::*;
 
 fn main() {
-	let args: Vec<String> = args().collect();
+	let args: Vec<String> = std::env::args().collect();
 
 	if args.len() != 2 {
 		println!("please provide the number of the day you want to get the answer for");

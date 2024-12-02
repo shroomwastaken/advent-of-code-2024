@@ -1,5 +1,3 @@
-use std::{iter::zip, process::exit};
-
 fn gather_input(test: bool) -> Vec<(usize, usize)> {
 	let mut res: Vec<(usize, usize)> = vec![];
 	if let Ok(f) = std::fs::read_to_string(if test { "ti.txt" } else { "i.txt" }) {
@@ -11,12 +9,13 @@ fn gather_input(test: bool) -> Vec<(usize, usize)> {
 		}
 	} else {
 		println!("couldn't find input file!");
-		exit(1);
+		std::process::exit(1);
 	}
 	return res;
 }
 
 fn part1(data: &Vec<(usize, usize)>) -> usize {
+	use std::iter::zip;
 	let mut l1: Vec<usize> = data.iter().map(|x| { x.0 }).collect();
 	let mut l2: Vec<usize> = data.iter().map(|x| { x.1 }).collect();
 	l1.sort();

@@ -1,5 +1,3 @@
-use std::{collections::HashSet, process::exit};
-
 fn gather_input(test: bool) -> Vec<Vec<isize>> {
 	let mut res: Vec<Vec<isize>> = vec![];
 	if let Ok(f) = std::fs::read_to_string(if test { "ti.txt" } else { "i.txt" }) {
@@ -12,7 +10,7 @@ fn gather_input(test: bool) -> Vec<Vec<isize>> {
 		}
 	} else {
 		println!("couldn't find input file!");
-		exit(1);
+		std::process::exit(1);
 	}
 	return res;
 }
@@ -42,6 +40,7 @@ fn part1(data: &Vec<Vec<isize>>) -> usize {
 
 fn part2(data: &Vec<Vec<isize>>) -> usize {
 	fn has_unique_elements(a: &Vec<isize>) -> bool {
+		use std::collections::HashSet;
 		let mut s: HashSet<isize> = HashSet::new();
 		for i in 0..a.len() {
 			if !s.insert(a[i]) { return false }
