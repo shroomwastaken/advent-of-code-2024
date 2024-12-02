@@ -14,6 +14,7 @@ fn main() {
 	if let Ok(res) = args[1].parse::<usize>() {
 		match res {
 			1 => { day1::run(); }
+			2 => { day2::run(); }
 			_ => {
 				println!("bad day number");
 			}
