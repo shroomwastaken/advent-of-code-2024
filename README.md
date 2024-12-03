@@ -5,3 +5,6 @@ my solutions to the adventofcode2024 puzzles in rust!
 - clone repo
 - put your input in "i.txt" in the repo's root folder
 - `cargo run -- x` where x is the number of the day you want to get the answer for
+
+## dependencies
+- `regex` for day 3

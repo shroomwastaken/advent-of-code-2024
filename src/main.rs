@@ -13,6 +13,7 @@ fn main() {
 		match res {
 			1 => { day1::run(); }
 			2 => { day2::run(); }
+			3 => { day3::run(); }
 			_ => {
 				println!("bad day number");
 			}
