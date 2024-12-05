@@ -34,12 +34,33 @@ fn part1(rules: &Vec<(usize, usize)>, pages: &Vec<Vec<usize>>) -> usize {
 }
 
 fn part2(rules: &Vec<(usize, usize)>, pages: &Vec<Vec<usize>>) -> usize {
-	return 0;
+	let check_arr = |x: &Vec<usize>| -> bool {
+		for y in rules {
+			if !x.contains(&y.0) || !x.contains(&y.1) { continue; }
+			if x.iter().position(|x| *x == y.0).unwrap() > x.iter().position(|x| *x == y.1).unwrap() { return false; }
+		}
+		return true;
+	};
+	return pages.iter()
+		.filter(|x| { return !check_arr(x); })
+		.map(|x| {
+			let mut cloned: Vec<usize> = x.clone();
+			while !check_arr(&cloned) {
+				for y in rules {
+					if !cloned.contains(&y.0) || !cloned.contains(&y.1) { continue; }
+					let a = cloned.iter().position(|x| *x == y.0).unwrap();
+					let b = cloned.iter().position(|x| *x == y.1).unwrap();
+					if a > b { cloned.swap(a, b); }
+				}
+			}
+			return cloned[cloned.len() / 2];
+		})
+		.sum();
 }
 
 pub fn run() {
 	use std::time::Instant;
-	let (rules, pages): (Vec<(usize, usize)>, Vec<Vec<usize>>) = gather_input(true);
+	let (rules, pages): (Vec<(usize, usize)>, Vec<Vec<usize>>) = gather_input(false);
 	let mut start: Instant = Instant::now();
 	println!("part 1 answer: {}\ntook {:?}", part1(&rules, &pages), Instant::now().duration_since(start));
 	start = Instant::now();
