@@ -86,7 +86,74 @@ fn part1(data: &Vec<Vec<u8>>) -> usize {
 }
 
 fn part2(data: &Vec<Vec<u8>>) -> usize {
-	return 0;
+	let mut grow: isize = 0;
+	let mut gcol: isize = 0;
+	for line in 0..data.len() {
+		if data[line].contains(&2) {
+			grow = line as isize;
+			gcol = data[line].iter().position(|x| *x == 2).unwrap() as isize;
+			break;
+		}
+	};
+
+	let srow: isize = grow;
+	let scol: isize = gcol;
+
+	let mut direction: u8;
+
+	let mut ndata: Vec<Vec<u8>> = data.clone();
+	let mut res: usize = 0;
+
+	for i in 0..ndata.len() {
+		for j in 0..ndata[1].len() {
+			if ndata[i][j] == 1 {continue;}
+			grow = srow;
+			gcol = scol;
+			direction = 0;
+			let mut visited_buffer: Vec<Vec<(bool, u8)>> = vec![];
+			for _ in 0..data.len() {
+				let mut new: Vec<(bool, u8)> = vec![];
+				for _ in 0..data[1].len() {
+					new.push((false, 255));
+				}
+				visited_buffer.push(new)
+			}
+			let mut taken_first_step: bool = false;
+			ndata[i][j] = 1;
+
+			while grow >= 0 && grow < ndata.len() as isize && gcol >= 0 && gcol < ndata[1].len() as isize {
+				if visited_buffer[grow as usize][gcol as usize] == (true, direction) && taken_first_step { res += 1; break; }
+				if !taken_first_step { taken_first_step = true }
+				if !visited_buffer[grow as usize][gcol as usize].0 { visited_buffer[grow as usize][gcol as usize] = (true, direction); }
+				match direction {
+					0 => {
+						if grow == 0 { grow -= 1; continue; }
+						if ndata[(grow - 1) as usize][gcol as usize] == 1 { direction += 1; continue; }
+						grow -= 1;
+					}
+					1 => {
+						if gcol == (ndata[1].len() - 1) as isize { gcol += 1; continue; }
+						if ndata[grow as usize][(gcol + 1) as usize] == 1 { direction += 1; continue; }
+						gcol += 1;
+					}
+					2 => {
+						if grow == (ndata.len() - 1) as isize { grow += 1; continue; }
+						if ndata[(grow + 1) as usize][gcol as usize] == 1 { direction += 1; continue; }
+						grow += 1;
+					}
+					3 => {
+						if gcol == 0 { gcol -= 1; continue; }
+						if ndata[grow as usize][(gcol - 1) as usize] == 1 { direction = 0; continue; }
+						gcol -= 1;
+					}
+					_ => {}
+				}
+			}
+			ndata[i][j] = 0;
+		}
+	}
+
+	return res;
 }
 
 pub fn run() {
