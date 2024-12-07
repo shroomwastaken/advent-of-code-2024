@@ -49,7 +49,7 @@ fn part2(data: &Vec<(usize, Vec<usize>)>) -> usize {
 					else if curop == 1 { r *= x.1[i]; }
 					else {
 						// log10().floor() + 1 is the amount of digits a number has
-						r *= 10usize.pow(((x.1[i] as f32).log10().floor() + 1f32) as u32) as usize;
+						r *= 10usize.pow(((x.1[i] as f32).log10().floor() + 1f32) as u32);
 						r += x.1[i];
 					}
 				}
