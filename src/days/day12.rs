@@ -114,10 +114,6 @@ fn part2(data: &Vec<Vec<char>>) -> usize {
 
 		for p in &points { matrix[p.0+1][p.1+1] = 1; }
 
-		// for i in 0..20 {
-		// 	println!("{:?}", matrix[i][..20].to_vec());
-		// }
-
 		let mut sides: usize = 0;
 
 		// traverse the outer shape
