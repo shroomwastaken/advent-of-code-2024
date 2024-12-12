@@ -9,30 +9,30 @@ fn gather_input(test: bool) -> Vec<Vec<char>> {
 	return res;
 }
 
+fn find_next_points(data: &mut Vec<Vec<(char, bool)>>, start: (usize, usize)) -> Vec<(usize, usize)> {
+	let points_to_check = [
+		(start.0.checked_sub(1).unwrap_or(255), start.1),
+		(start.0, if start.1 + 1 >= data[0].len() { 255 } else { start.1 + 1 }),
+		(if start.0 + 1 >= data.len() { 255 } else { start.0 + 1 }, start.1),
+		(start.0, start.1.checked_sub(1).unwrap_or(255)),
+	];
+	let initial_letter = data[start.0][start.1];
+	let mut resvec: Vec<(usize, usize)> = vec![];
+	for p in points_to_check {
+		if p.0 == 255 || p.1 == 255 { continue; }
+		let c =  data[p.0][p.1];
+		if c.0 == initial_letter.0 && !c.1 { data[p.0][p.1].1 = true; resvec.push(p); }
+	}
+	data[start.0][start.1].1 = true;
+	return resvec;
+}
+
 fn part1(data: &Vec<Vec<char>>) -> usize {
 	let mut data: Vec<Vec<(char, bool)>> = data.iter().map(|x| x.iter().map(|y| (*y, false)).collect()).collect();
 
-	fn find_next_points(data: &mut Vec<Vec<(char, bool)>>, start: (usize, usize)) -> Vec<(usize, usize)> {
-		let points_to_check: [(usize, usize); 4] = [
-			(start.0.checked_sub(1).unwrap_or(255), start.1),
-			(start.0, if start.1 + 1 >= data[0].len() { 255 } else { start.1 + 1 }),
-			(if start.0 + 1 >= data.len() { 255 } else { start.0 + 1 }, start.1),
-			(start.0, start.1.checked_sub(1).unwrap_or(255)),
-		];
-		let initial_letter: (char, bool) = data[start.0][start.1];
-		let mut resvec: Vec<(usize, usize)> = vec![];
-		for p in points_to_check {
-			if p.0 == 255 || p.1 == 255 { continue; }
-			let c: (char, bool) =  data[p.0][p.1];
-			if c.0 == initial_letter.0 && !c.1 { data[p.0][p.1].1 = true; resvec.push(p); }
-		}
-		data[start.0][start.1].1 = true;
-		return resvec;
-	}
-
 	fn find_perimeter(points: Vec<(usize, usize)>) -> usize {
 		fn find_neighbors(data: &Vec<Vec<u8>>, start: (usize, usize)) -> usize {
-			let points_to_check = [
+			let points_to_check: [(usize, usize); 4] = [
 				(start.0.checked_sub(1).unwrap_or(255), start.1),
 				(start.0, if start.1 + 1 >= data[0].len() { 255 } else { start.1 + 1 }),
 				(if start.0 + 1 >= data.len() { 255 } else { start.0 + 1 }, start.1),
@@ -88,29 +88,10 @@ fn part1(data: &Vec<Vec<char>>) -> usize {
 fn part2(data: &Vec<Vec<char>>) -> usize {
 	let mut data: Vec<Vec<(char, bool)>> = data.iter().map(|x| x.iter().map(|y| (*y, false)).collect()).collect();
 
-	fn find_next_points(data: &mut Vec<Vec<(char, bool)>>, start: (usize, usize)) -> Vec<(usize, usize)> {
-		let points_to_check = [
-			(start.0.checked_sub(1).unwrap_or(255), start.1),
-			(start.0, if start.1 + 1 >= data[0].len() { 255 } else { start.1 + 1 }),
-			(if start.0 + 1 >= data.len() { 255 } else { start.0 + 1 }, start.1),
-			(start.0, start.1.checked_sub(1).unwrap_or(255)),
-		];
-		let initial_letter = data[start.0][start.1];
-		let mut resvec: Vec<(usize, usize)> = vec![];
-		for p in points_to_check {
-			if p.0 == 255 || p.1 == 255 { continue; }
-			let c =  data[p.0][p.1];
-			if c.0 == initial_letter.0 && !c.1 { data[p.0][p.1].1 = true; resvec.push(p); }
-		}
-		data[start.0][start.1].1 = true;
-		return resvec;
-	}
-
 	fn find_number_of_sides(points: Vec<(usize, usize)>) -> usize {
 		let mut matrix: Vec<Vec<u8>> = vec![];
+		// arbitrarily sized matrix
 		for _ in 0..160 { matrix.push(vec![0; 160]) }
-
-		let initial_area: usize = points.len();
 
 		for p in &points { matrix[p.0+1][p.1+1] = 1; }
 
@@ -128,6 +109,8 @@ fn part2(data: &Vec<Vec<char>>) -> usize {
 		// 0 - left, 1 - up, 2 - right, 3 - down
 		let mut direction: usize = 0;
 
+		// probably way overcomplicated shape border traversal algorithm
+		// the amount of sides of a shape == the amount of times we change direction while traversing its borders
 		let mut returned: bool = false;
 		while !returned {
 			match direction {
@@ -156,16 +139,16 @@ fn part2(data: &Vec<Vec<char>>) -> usize {
 			returned = (prow, pcol) == return_point && direction == 0;
 		}
 
-		// find and traverse all the inner shapes
+		// now we need to find all the shapes that are enclosed in the outer shape
 		let mut nmatrix: Vec<Vec<(char, bool)>> = vec![];
 		for _ in 0..160 { nmatrix.push(vec![(0 as char, false); 160]) }
 
 		// flood-fill everything, all thats left are the enclosed shapes which we need to check
-		let frow = matrix.iter().position(|x| x.contains(&0)).unwrap();
-		let fcol = matrix[frow].iter().position(|x| *x == 0).unwrap();
+		let frow: usize = matrix.iter().position(|x| x.contains(&0)).unwrap();
+		let fcol: usize = matrix[frow].iter().position(|x| *x == 0).unwrap();
 
-		let target_color = matrix[frow][fcol];
-		let new_color = 1;
+		let target_color: u8 = matrix[frow][fcol];
+		let new_color: u8 = 1;
 
 		let mut stack: Vec<(usize, usize)> = vec![(frow, fcol)];
 
@@ -193,22 +176,28 @@ fn part2(data: &Vec<Vec<char>>) -> usize {
 			}
 		}
 
+		// invert the flood-filled matrix, now we have only the enclosed shapes
+		// everything else is 0
 		for row in 0..matrix.len() {
 			for col in 0..matrix[row].len() {
 				if matrix[row][col] == 0 { nmatrix[row][col] = ('A', false) }
 			}
 		}
 
+		// find amount of sides of shapes that were enclosed in the outer shape
+		// then add them to the amount of sides of the outer shape
+		// this is the same thing we do outside of this function
+		// i did this since we need to traverse all the inner shapes individualy
+		// and at the moment we have *all* the points of *all* the inner shapes
+		// (i hope this made sense)
 		let mut crow: usize = 0;
 		let mut ccol: usize = 0;
 		while crow < nmatrix.len() {
 			if nmatrix[crow][ccol].1 || nmatrix[crow][ccol].0 == 0 as char { ccol += 1; if ccol >= nmatrix[0].len() { crow += 1; ccol = 0; }; continue; }
-			let mut area: usize = 1;
 			let mut points: Vec<(usize, usize)> = find_next_points(&mut nmatrix, (crow, ccol));
 			let mut all_points: Vec<(usize, usize)> = vec![(crow, ccol)];
 			all_points.extend(points.clone());
 			while !points.is_empty() {
-				area += points.len();
 				let mut new: Vec<(usize, usize)> = vec![];
 				for p in points {
 					let found_points: Vec<(usize, usize)> = find_next_points(&mut nmatrix, p);
@@ -217,7 +206,7 @@ fn part2(data: &Vec<Vec<char>>) -> usize {
 				points = new.clone();
 				all_points.extend(points.clone());
 			}
-			if area < initial_area { sides += find_number_of_sides(all_points); };
+			sides += find_number_of_sides(all_points); // traverse inner shape that we got
 			ccol += 1;
 			if ccol >= nmatrix[0].len() { crow += 1; ccol = 0; }
 		}
@@ -244,7 +233,7 @@ fn part2(data: &Vec<Vec<char>>) -> usize {
 			points = new.clone();
 			all_points.extend(points.clone());
 		}
-		let number_of_sides = find_number_of_sides(all_points);
+		let number_of_sides: usize = find_number_of_sides(all_points);
 		price += region_area * number_of_sides;
 		ccol += 1;
 		if ccol >= data[0].len() { crow += 1; ccol = 0; }
@@ -254,7 +243,7 @@ fn part2(data: &Vec<Vec<char>>) -> usize {
 
 pub fn run() {
 	use std::time::Instant;
-	let data = gather_input(false);
+	let data: Vec<Vec<char>> = gather_input(false);
 	let mut start: Instant = Instant::now();
 	println!("part 1 answer: {}\ntook {:?}", part1(&data), Instant::now().duration_since(start));
 	start = Instant::now();
