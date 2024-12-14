@@ -27,21 +27,21 @@ fn gather_input(test: bool) -> Vec<Machine> {
 	return res;
 }
 
-fn part1(data: &Vec<Machine>) -> isize {
-	let mut tokens: isize = 0;
+fn part1(data: &Vec<Machine>) -> usize {
+	let mut tokens: usize = 0;
 	for m in data {
 		let denom: f64 = (m.ay * m.bx - m.ax * m.by) as f64;
 		let aa: f64 = ((m.py * m.bx - m.px * m.by) as f64) / denom;
 		let ab: f64 = ((m.px * m.ay - m.py * m.ax) as f64) / denom;
 		if aa.fract() == 0.0 && ab.fract() == 0.0 {
-			tokens += aa as isize * 3 + ab as isize
+			tokens += aa as usize * 3 + ab as usize
 		}
 	}
 	return tokens;
 }
 
-fn part2(data: &Vec<Machine>) -> isize {
-	let mut tokens: isize = 0;
+fn part2(data: &Vec<Machine>) -> usize {
+	let mut tokens: usize = 0;
 	for m in data {
 		let px: isize = m.px + 10000000000000;
 		let py: isize = m.py + 10000000000000;
@@ -49,7 +49,7 @@ fn part2(data: &Vec<Machine>) -> isize {
 		let aa: f64 = ((py * m.bx - px * m.by) as f64) / denom;
 		let ab: f64 = ((px * m.ay - py * m.ax) as f64) / denom;
 		if aa.fract() == 0.0 && ab.fract() == 0.0 {
-			tokens += aa as isize * 3 + ab as isize
+			tokens += aa as usize * 3 + ab as usize
 		}
 	}
 	return tokens;
