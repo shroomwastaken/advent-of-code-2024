@@ -24,9 +24,9 @@ fn part1(data: &Vec<Vec<char>>) -> usize {
 	const DIRECTIONS: [(i16, i16); 4] = [(0, 1), (1, 0), (0, -1), (-1, 0)];
 
 	// so we don't check cells we've checked before
-	let mut visited_cells: HashSet<(i16, i16, usize)> = HashSet::new();
+	let mut visited_cells: HashSet<(i16, i16, i8)> = HashSet::new();
 	// list of cells with (cost, r, c, direction (index))
-	let mut queue: Vec<(usize, i16, i16, usize)> = vec![(0, si.0, si.1, 0)];
+	let mut queue: Vec<(usize, i16, i16, i8)> = vec![(0, si.0, si.1, 0)];
 	while !queue.is_empty() {
 		// sort by cost
 		queue.sort_by(|x, y| x.0.cmp(&y.0));
@@ -38,7 +38,7 @@ fn part1(data: &Vec<Vec<char>>) -> usize {
 		if (r, c) == ei { return cost; }
 		visited_cells.insert((r, c, dir));
 		// if forwards isn't a wall, add forwards cell to queue
-		let (nr, nc) = (r + DIRECTIONS[dir].0, c + DIRECTIONS[dir].1);
+		let (nr, nc) = (r + DIRECTIONS[dir as usize].0, c + DIRECTIONS[dir as usize].1);
 		if data[nr as usize][nc as usize] != '#' { queue.push((cost + 1, nr, nc, dir)); }
 		// add all possible turns to queue
 		queue.push((cost + 1000, r, c, (dir + 1).rem_euclid(4)));
@@ -53,7 +53,7 @@ fn part2(data: &Vec<Vec<char>>) -> usize {
 
 pub fn run() {
 	use std::time::Instant;
-	let data: Vec<Vec<char>> = gather_input(true);
+	let data: Vec<Vec<char>> = gather_input(false);
 	let mut start: Instant = Instant::now();
 	println!("part 1 answer: {}\ntook {:?}", part1(&data), Instant::now().duration_since(start));
 	start = Instant::now();
