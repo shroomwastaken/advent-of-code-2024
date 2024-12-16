@@ -4,7 +4,7 @@ use std::collections::{HashMap, HashSet};
 const DIRECTIONS: [(i16, i16); 4] = [(0, 1), (1, 0), (0, -1), (-1, 0)];
 
 fn gather_input(test: bool) -> Vec<Vec<char>> {
-	let mut res: Vec<Vec<char>> = vec![];
+	let res: Vec<Vec<char>>;
 	if let Ok(f) = std::fs::read_to_string(if test { "ti.txt" } else { "i.txt" }) {
 		res = f.split("\n").map(|x| x.chars().collect()).collect();
 	} else {
