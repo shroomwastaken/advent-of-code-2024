@@ -8,7 +8,6 @@ my solutions to the adventofcode2024 puzzles in rust!
 
 ## dependencies
 - `regex` for day 3
-- `lru` for day 19 part 2
 
 ## solutions that aren't mine
 - [day 15 part 2](src/days/day15.rs) -> [solution](https://youtu.be/aCqtVmSSkUs&t=711) by HyperNeutrino (translated from python)

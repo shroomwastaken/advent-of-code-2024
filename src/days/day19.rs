@@ -20,7 +20,7 @@ fn part1(designs: &Vec<String>, patterns: &Vec<String>) -> usize {
 		}
 		if possible.is_empty() { continue; }
 		while !possible.is_empty() {
-			let poss = possible.pop().unwrap();
+			let poss: String = possible.pop().unwrap();
 			if poss == *pattern { res += 1; break; }
 			for design in designs {
 				if pattern[poss.len()..].starts_with(design) { possible.push(poss.clone() + design); }
@@ -31,12 +31,10 @@ fn part1(designs: &Vec<String>, patterns: &Vec<String>) -> usize {
 }
 
 fn part2(designs: &Vec<String>, patterns: &Vec<String>) -> usize {
-	use lru::LruCache;
+	use std::collections::HashMap;
 
-	fn solve(p: &String, designs: &Vec<String>, maxlen: usize, cache: &mut LruCache<String, usize>) -> usize {
-		if let Some(x) = cache.get(p) {
-			return *x;
-		}
+	fn solve(p: &String, designs: &Vec<String>, maxlen: usize, cache: &mut HashMap<String, usize>) -> usize {
+		if let Some(x) = cache.get(p) { return *x; }
 		let mut count: usize = 0;
 		// base case, if we've found a good combination
 		if p == "" { return 1; }
@@ -47,12 +45,12 @@ fn part2(designs: &Vec<String>, patterns: &Vec<String>) -> usize {
 				count += solve(&p[i..].to_string(), designs, maxlen, cache);
 			}
 		}
-		cache.put(p.clone(), count);
+		cache.insert(p.clone(), count);
 		return count;
 	}
 
 	let maxlen: usize = patterns.iter().map(|x| x.len()).max().unwrap();
-	let mut cache: LruCache<String, usize> = LruCache::unbounded();
+	let mut cache: HashMap<String, usize> = HashMap::new();
 	let mut res: usize = 0;
 	for pat in patterns {
 		res += solve(pat, designs, maxlen, &mut cache)
