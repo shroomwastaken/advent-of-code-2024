@@ -134,6 +134,9 @@ fn compute_dirpad_paths() -> HashMap<(char, char), HashSet<Vec<char>>> {
 }
 
 fn part1(data: &Vec<String>) -> usize {
+	// part 1 solution by me
+	// takes 15ish seconds to run
+	// took me 8 hours to make this
 	let mut res: usize = 0;
 	let numpad_paths: HashMap<(char, char), HashSet<Vec<char>>> = compute_numpad_paths();
 	let dirpad_paths: HashMap<(char, char), HashSet<Vec<char>>> = compute_dirpad_paths();
@@ -187,7 +190,7 @@ fn part1(data: &Vec<String>) -> usize {
 			}
 			let mut p: Vec<Vec<char>> = pathposs[0].iter().map(|x| (*x).clone()).collect::<Vec<Vec<char>>>();
 			for i in 1..pathposs.len() {
-				let mut new_p = vec![];
+				let mut new_p: Vec<Vec<char>> = vec![];
 				for it in &p {
 					for it2 in &pathposs[i] {
 						let mut new = it.clone();
@@ -207,8 +210,44 @@ fn part1(data: &Vec<String>) -> usize {
 }
 
 fn part2(data: &Vec<String>) -> usize {
-	let mut res: usize = 0;
-	return res;
+	// part 2 solution by Todd Ginsberg (translated from kotlin)
+	// https://todd.ginsberg.com/post/advent-of-code/2024/day21/
+	// takes about a millisecond to run
+	let numpad_paths: HashMap<(char, char), HashSet<Vec<char>>> = compute_numpad_paths();
+	let dirpad_paths: HashMap<(char, char), HashSet<Vec<char>>> = compute_dirpad_paths();
+	fn cost(
+		code: &String,
+		depth: u8,
+		transitions: &HashMap<(char, char), HashSet<Vec<char>>>,
+		cache: &mut HashMap<(String, u8), usize>,
+		dirpad_paths: &HashMap<(char, char), HashSet<Vec<char>>>
+	) -> usize {
+		if cache.contains_key(&(code.to_owned(), depth)) { return cache[&(code.to_owned(), depth)]; };
+		let res: usize = ("A".to_owned() + code).chars()
+			.collect::<Vec<char>>()
+			.windows(2)
+			.map(|x| {
+				let paths: &HashSet<Vec<char>> = transitions.get(&(x[0], x[1])).unwrap();
+				if depth == 0 { return paths.iter().map(|y| y.len()).min().unwrap(); }
+				else {
+    				return paths.iter()
+						.map(|y| return cost(
+							&y.iter().collect::<String>(), depth - 1,
+							dirpad_paths, cache, dirpad_paths,
+						))
+						.min()
+						.unwrap();
+				}
+			}).sum();
+		cache.insert((code.to_owned(), depth), res);
+		return res;
+	}
+	let mut cache: HashMap<(String, u8), usize> = HashMap::new();
+	return data.iter().map(|x| {
+		return cost(x, 25,
+			&numpad_paths, &mut cache, &dirpad_paths,
+		) * x.as_str()[..x.len() - 1].parse::<usize>().unwrap();
+	}).sum();
 }
 
 pub fn run() {
