@@ -16,9 +16,9 @@ fn part1(data: &Vec<usize>) -> usize {
 		.map(|x| {
 			let mut nx: usize = *x;
 			for _ in 0..2000 {
-				let step1: usize = (nx ^ (nx * 64)) % 2usize.pow(24);
-				let step2: usize = (step1 ^ (step1 / 32)) % 2usize.pow(24);
-				let step3: usize = (step2 ^ (step2 * 2048)) % 2usize.pow(24);
+				let step1: usize = (nx ^ (nx << 6)) & 16777215;
+				let step2: usize = (step1 ^ (step1 >> 5)) & 16777215;
+				let step3: usize = (step2 ^ (step2 << 11)) & 16777215;
 				nx = step3;
 			}
 			return nx;
@@ -31,9 +31,9 @@ fn part2(data: &Vec<usize>) -> usize {
 			let mut resvec: Vec<u8> = vec![(*x % 10) as u8,];
 			let mut nx: usize = *x;
 			for _ in 0..2000 {
-				let step1: usize = (nx ^ (nx * 64)) % 2usize.pow(24);
-				let step2: usize = (step1 ^ (step1 / 32)) % 2usize.pow(24);
-				let step3: usize = (step2 ^ (step2 * 2048)) % 2usize.pow(24);
+				let step1: usize = (nx ^ (nx << 6)) & 16777215;
+				let step2: usize = (step1 ^ (step1 >> 5)) & 16777215;
+				let step3: usize = (step2 ^ (step2 << 11)) & 16777215;
 				nx = step3;
 				resvec.push((nx % 10) as u8);
 			}
