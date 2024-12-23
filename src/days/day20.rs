@@ -41,7 +41,7 @@ fn part1(data: &Vec<Vec<char>>) -> usize {
 				break;
 			}
 		}
- 	}
+	}
 
 	let mut res: usize = 0;
 	for cr in 1..(distances.len() - 1) as i16 {
@@ -87,7 +87,7 @@ fn part2(data: &Vec<Vec<char>>) -> usize {
 				break;
 			}
 		}
- 	}
+	}
 
 	let mut res: usize = 0;
 	for cr in 1..(distances.len() - 1) as i16 {

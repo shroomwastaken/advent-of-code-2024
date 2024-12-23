@@ -1,4 +1,4 @@
-use std::{collections::{HashMap, HashSet}, vec};
+use std::collections::{HashMap, HashSet};
 
 fn gather_input(test: bool) -> Vec<String> {
 	let res: Vec<String>;
@@ -28,8 +28,8 @@ const DIRPAD: [[char; 3]; 2] = [
 // this function was brought to you by perplexity.ai
 fn permute<T: Clone>(arr: &mut Vec<T>, start: usize, result: &mut Vec<Vec<T>>) {
 	if arr.len() == 0 {
-        return;
-    }
+		return;
+	}
 
 	if start == arr.len() - 1 {
 		result.push(arr.clone());
@@ -230,7 +230,7 @@ fn part2(data: &Vec<String>) -> usize {
 				let paths: &HashSet<Vec<char>> = transitions.get(&(x[0], x[1])).unwrap();
 				if depth == 0 { return paths.iter().map(|y| y.len()).min().unwrap(); }
 				else {
-    				return paths.iter()
+					return paths.iter()
 						.map(|y| return cost(
 							&y.iter().collect::<String>(), depth - 1,
 							dirpad_paths, cache, dirpad_paths,
