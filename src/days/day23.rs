@@ -51,29 +51,30 @@ fn part1(data: &Vec<(String, String)>) -> usize {
 	}).count() / 3;
 }
 
-fn combinations<T: Clone>(iterable: Vec<T>, r: usize) -> Vec<Vec<T>> {
-	let n = iterable.len();
-	if r > n {
-		return vec![];
-	}
+// thanks perplexity
+// the function in the stackoverflow post was just straight up wrong lmao
+// but the solution still worked for some reason???
+fn combinations<T: Clone>(elements: &[T], k: usize) -> Vec<Vec<T>> {
+	let n: usize = elements.len();
+	if k > n { return vec![]; }
 
-	let mut indices: Vec<usize> = (0..r).collect();
 	let mut result: Vec<Vec<T>> = Vec::new();
+	let mut combination: Vec<T> = Vec::with_capacity(k);
 
-	result.push(indices.iter().map(|&i| iterable[i].clone()).collect());
-
-	loop {
-		let mut i: usize = r;
-		while i > 0 {
-			i -= 1;
-			if indices[i] != i + n - r { break; }
+	fn backtrack<T: Clone>(elements: &[T], k: usize, start: usize, combination: &mut Vec<T>, result: &mut Vec<Vec<T>>) {
+		if combination.len() == k {
+			result.push(combination.clone());
+			return;
 		}
-		if i == 0 { break; }
-		indices[i] += 1;
-		for j in (i + 1)..r { indices[j] = indices[j - 1] + 1; }
-		result.push(indices.iter().map(|&i| iterable[i].clone()).collect());
+
+		for i in start..elements.len() {
+			combination.push(elements[i].clone());
+			backtrack(elements, k, i + 1, combination, result);
+			combination.pop();
+		}
 	}
 
+	backtrack(elements, k, 0, &mut combination, &mut result);
 	return result;
 }
 
@@ -98,7 +99,7 @@ fn part2(data: &Vec<(String, String)>) -> String {
 
 	for conn in &connections2 {
 		for i in 3..conn.1.len() + 1 {
-			let combs: Vec<Vec<String>> = combinations(conn.1.clone(), i);
+			let combs: Vec<Vec<String>> = combinations(conn.1, i);
 			for comb in combs {
 				let mut conds: Vec<bool> = vec![];
 				for elem in 0..comb.len() {
