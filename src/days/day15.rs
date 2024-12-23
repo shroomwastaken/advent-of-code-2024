@@ -1,7 +1,7 @@
 fn gather_input(test: bool) -> (Vec<Vec<u8>>, Vec<u8>) {
 	let mut res: (Vec<Vec<u8>>, Vec<u8>) = (vec![], vec![]);
 	if let Ok(f) = std::fs::read_to_string(if test { "ti.txt" } else { "i.txt" }) {
-		let mut parts = f.split("\n\n");
+		let mut parts: std::str::Split<'_, &str> = f.split("\n\n");
 		for line in parts.next().unwrap().split("\n") {
 			res.0.push(line.chars().map(|x| match x {'.' => 0, '#' => 1, 'O' => 2, '@' => 3, _ => { panic!() },}).collect::<Vec<u8>>());
 		}
@@ -127,7 +127,7 @@ fn part1(map: &Vec<Vec<u8>>, moves: &Vec<u8>) -> usize {
 			_ => {},
 		}
 	}
-	let mut res = 0;
+	let mut res: usize = 0;
 	for line in 0..map.len() {
 		for ch in 0..map[line].len() {
 			if map[line][ch] == 2 { res += 100 * line + ch };

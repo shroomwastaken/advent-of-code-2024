@@ -15,7 +15,7 @@ fn part1(data: &Vec<usize>) -> usize {
 	for _ in 0..25 {
 		for stone in 0..initial.len() {
 			if initial[stone] == 0 { new.push(1); continue; }
-			let digits = initial[stone].ilog10() + 1;
+			let digits: u32 = initial[stone].ilog10() + 1;
 			if digits & 1 == 0 {
 				let ten_to_power = 10usize.pow(digits / 2);
 				new.extend([initial[stone] / ten_to_power, initial[stone] % ten_to_power]);
@@ -41,7 +41,7 @@ fn part2(data: &Vec<usize>) -> usize {
 				else { *new.get_mut(&1).unwrap() += count }
 				continue;
 			}
-			let digits = num.ilog10() + 1;
+			let digits: u32 = num.ilog10() + 1;
 			if digits & 1 == 0 {
 				let ten_to_power: usize = 10usize.pow(digits >> 1);
 				let left_half = num / ten_to_power;

@@ -20,7 +20,7 @@ fn find_next_points(data: &mut Vec<Vec<(char, bool)>>, start: (usize, usize)) ->
 	let mut resvec: Vec<(usize, usize)> = vec![];
 	for p in points_to_check {
 		if p.0 == 255 || p.1 == 255 { continue; }
-		let c =  data[p.0][p.1];
+		let c: (char, bool) =  data[p.0][p.1];
 		if c.0 == initial_letter.0 && !c.1 { data[p.0][p.1].1 = true; resvec.push(p); }
 	}
 	data[start.0][start.1].1 = true;

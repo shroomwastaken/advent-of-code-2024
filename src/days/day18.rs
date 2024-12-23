@@ -79,7 +79,7 @@ fn part2(data: &Vec<(usize, usize)>) -> String {
 
 pub fn run() {
 	use std::time::Instant;
-	let data = gather_input(false);
+	let data: Vec<(usize, usize)> = gather_input(false);
 	let mut start: Instant = Instant::now();
 	println!("part 1 answer: {}\ntook {:?}", part1(&data), Instant::now().duration_since(start));
 	start = Instant::now();

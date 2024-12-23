@@ -57,7 +57,7 @@ fn part2(data: &Vec<Robot>) -> usize {
 				vy: r.vy
 			};
 		}).collect();
-		let mut map = [['.'; W as usize]; H as usize];
+		let mut map: [[char; 101]; 103] = [['.'; W as usize]; H as usize];
 		new.iter().for_each(|r| map[r.y as usize][r.x as usize] = '#');
 		for l in 0..map.len() {
 			// this required some manual checking lol

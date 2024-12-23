@@ -63,18 +63,14 @@ fn combinations<T: Clone>(iterable: Vec<T>, r: usize) -> Vec<Vec<T>> {
 	result.push(indices.iter().map(|&i| iterable[i].clone()).collect());
 
 	loop {
-		let mut i = r;
+		let mut i: usize = r;
 		while i > 0 {
 			i -= 1;
-			if indices[i] != i + n - r {
-				break;
-			}
+			if indices[i] != i + n - r { break; }
 		}
 		if i == 0 { break; }
 		indices[i] += 1;
-		for j in (i + 1)..r {
-			indices[j] = indices[j - 1] + 1;
-		}
+		for j in (i + 1)..r { indices[j] = indices[j - 1] + 1; }
 		result.push(indices.iter().map(|&i| iterable[i].clone()).collect());
 	}
 
@@ -120,7 +116,7 @@ fn part2(data: &Vec<(String, String)>) -> String {
 		}
 	}
 
-	let maxlen = sets.iter().map(|x| x.len()).max().unwrap();
+	let maxlen: usize = sets.iter().map(|x| x.len()).max().unwrap();
 	let good_sets: Vec<Vec<String>> = sets.iter().filter(|x| x.len() == maxlen).map(|x| x.clone()).collect();
 	let mut comps: Vec<String> = vec![];
 	for set in good_sets {
