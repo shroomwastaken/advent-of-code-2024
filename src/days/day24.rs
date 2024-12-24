@@ -63,23 +63,86 @@ fn part1(initial: &Vec<(String, bool)>, operations: &Vec<(String, String, u8, St
 				});
 			}
 		}
-		tries += 1;
-		if tries == 100 { return usize::MAX; }
 	}
 	let mut z_wires: Vec<(String, bool) >= all_the_wires.iter()
 		.filter(|x| x.0.starts_with("z"))
 		.map(|x| (x.0.clone(), x.1.unwrap()))
 		.collect();
 	z_wires.sort_by_key(|z| z.0.clone());
-	println!("{tries:?}");
 	return usize::from_str_radix(
 		&z_wires.iter().map(|x| if x.1 { '1' } else { '0' }).rev().collect::<String>(), 2
 	).unwrap();
 }
 
 fn part2(initial: &Vec<(String, bool)>, operations: &Vec<(String, String, u8, String)>) -> String {
-	// solved using python and dot to visualize the operations and my eyes to catch the mistakes
-	return "dkr,ggk,hhh,htp,rhv,z05,z15,z20".to_string();
+	// i initially solved this using python and dot to visualize the operations and my eyes to catch the mistakes
+	// here's a solution that hopefully works for any input (excuse the dirtiness of the code i am never going to clean it up)
+	// this works for my input but it may not work for yours if i missed something
+
+	use std::collections::HashSet;
+
+	let mut affected: HashSet<String> = HashSet::new();
+
+	// values starting with z should always be the result of an XOR, except for the last one
+	let mut z_ops: Vec<(String, String, u8, String)> = operations.iter()
+		.filter(|x| x.3.starts_with("z") && x.2 != 2)
+		.map(|x| x.clone())
+		.collect();
+	// so that the last z actually is last
+	z_ops.sort_by_key(|x| x.3.clone());
+	for op in &z_ops[..z_ops.len() - 1] { affected.insert(op.3.clone()); }
+
+	// if a value is a carry bit (the result of an OR), it should come from values that were the result of an AND
+	let carry_ops: Vec<(String, String, u8, String)> = operations.iter()
+		.filter(|x| x.2 == 1 )
+		.map(|x| x.clone())
+		.collect();
+	for op in carry_ops {
+		let x = operations.iter().find(|x| op.0 == x.3 || op.1 == x.3);
+		if x.is_none() { /* if we cant find one that means the op gives a zxx value, meaning we've printed it already */ continue; }
+		// let source_x = operations.iter().find(|y| x.)
+		if x.unwrap().2 != 0 {
+			affected.insert(x.unwrap().3.clone());
+		}
+	}
+
+	// if a value is the result of Xxx AND Yxx it should only have one operation where it's used, that being an OR
+	// except y00 AND x00
+	let check_ops: Vec<(String, String, u8, String)> = operations.iter()
+		.filter(|x| (
+			(x.0.starts_with("x") && x.1.starts_with("y")) ||
+			(x.0.starts_with("y") && x.1.starts_with("x"))) &&
+			x.2 == 0
+		).map(|x| x.clone())
+		.collect();
+	for op in check_ops {
+		let x = operations.iter().filter(|y| [y.0.clone(), y.1.clone()].contains(&op.3)).count();
+		if x > 1 && !op.0.contains("00") { affected.insert(op.3.clone()); }
+	}
+
+	// similarly if a value is the result of Xxx XOR Yxx it should have exactly 2 operations where it's used (a XOR and an AND)
+	// and the result of an XOR operation with that value should be a Zxx
+	// except for y00 XOR x00
+	let check_ops: Vec<(String, String, u8, String)> = operations.iter()
+	.filter(|x| (
+		(x.0.starts_with("x") && x.1.starts_with("y")) ||
+		(x.0.starts_with("y") && x.1.starts_with("x"))) &&
+		x.2 == 2
+	).map(|x| x.clone())
+	.collect();
+	for op in check_ops {
+		let x: usize = operations.iter()
+			.filter(|y| [y.0.clone(), y.1.clone()].contains(&op.3)).count();
+		let y = operations.iter().find(|j| [j.0.clone(), j.1.clone()].contains(&op.3) && j.2 == 2);
+		if y.is_none() && !op.3.starts_with("z") { affected.insert(op.3.clone()); continue }
+		if y.is_none() && op.3.starts_with("z") { continue; }
+		if !y.unwrap().3.starts_with("z") { affected.insert(y.unwrap().3.clone()); }
+		if x != 2 && !op.0.contains("00") { affected.insert(op.3.clone()); }
+	}
+
+	let mut affv: Vec<String> = affected.into_iter().collect();
+	affv.sort();
+	return affv.join(",");
 }
 
 pub fn run() {
