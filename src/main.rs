@@ -35,6 +35,7 @@ fn main() {
 			22 => { day22::run(); }
 			23 => { day23::run(); }
 			24 => { day24::run(); }
+			25 => { day25::run(); }
 			_ => {
 				println!("bad day number");
 			}
