@@ -50,7 +50,6 @@ fn part1(initial: &Vec<(String, bool)>, operations: &Vec<(String, String, u8, St
 			all_the_wires.insert(op.3.clone(), None);
 		}
 	}
-	let mut tries: usize = 0;
 	while !all_the_wires.iter().all(|x| x.1.is_some()) {
 		for op in operations {
 			if all_the_wires.contains_key(&op.0) && all_the_wires.contains_key(&op.1)
@@ -74,7 +73,7 @@ fn part1(initial: &Vec<(String, bool)>, operations: &Vec<(String, String, u8, St
 	).unwrap();
 }
 
-fn part2(initial: &Vec<(String, bool)>, operations: &Vec<(String, String, u8, String)>) -> String {
+fn part2(_: &Vec<(String, bool)>, operations: &Vec<(String, String, u8, String)>) -> String {
 	// i initially solved this using python and dot to visualize the operations and my eyes to catch the mistakes
 	// here's a solution that hopefully works for any input (excuse the dirtiness of the code i am never going to clean it up)
 	// this works for my input but it may not work for yours if i missed something
